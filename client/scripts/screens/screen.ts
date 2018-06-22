@@ -9,6 +9,7 @@ export abstract class Screen {
         this._app = app;
         this.stage = this.app.game.add.group();
         this.stage.inputEnableChildren = inputEnabled;
+        this.hide();
     }
 
     protected makeGroup(visible:boolean = false):any {
@@ -38,9 +39,14 @@ export abstract class Screen {
         return btn;
     }
 
+    protected prompt():void {
+
+    }
+
     protected makeSprite(name:string, x:number, y:number, group:any = null):any {
         if (group == null) group = this.stage;
-        let sprite:any = this.app.game.add.sprite(x, y, name, group);
+        let sprite:any = this.app.game.add.sprite(x, y, name);
+        group.add(sprite);
         sprite.anchor.setTo(0.5);
         return sprite;
     }
