@@ -73,12 +73,12 @@ export class MatchManager {
         if (a.horizontal) {
             let y = a.origin.y;
             for (let x:number = a.origin.x; x < a.origin.x+a.length; x++) {
-                if (this.intersects(b, x, y)) return false;
+                if (this.intersects(b, x, y)) return true;
             }
         } else {
             let x = a.origin.x;
             for (let y:number = a.origin.y; y < a.origin.y+a.length; y++) {
-                if (this.intersects(b, x, y)) return false;
+                if (this.intersects(b, x, y)) return true;
             }
         }
         return false;
@@ -119,7 +119,7 @@ export class MatchManager {
     }
 
     private randNum(min:number, max:number):number {
-        let gap:number = max-min;
-        return Math.floor(Math.random()*gap) + min + 1;
+        let gap:number = max-min+1;
+        return Math.floor(Math.random()*gap) + min;
     }
 }

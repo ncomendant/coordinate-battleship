@@ -33,6 +33,7 @@ class PlayScreen implements StateManager  {
     }
 
     public setupBoard(board:Ship[]):void {
+        console.log(board);
         for (let ship of board) {
             this.placeShip(ship);
         }
@@ -62,7 +63,6 @@ class PlayScreen implements StateManager  {
     public dispose():void {
 
     }
-
 }
 
 export class GameManager {
@@ -71,8 +71,6 @@ export class GameManager {
     private _eventManager:EventManager;
     private menuScreen:MenuScreen;
     private playScreen:PlayScreen;
-
-
 
     public constructor(eventManager:EventManager,  callback:() => void) {
 
