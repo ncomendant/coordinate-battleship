@@ -54,8 +54,8 @@ export class MatchManager {
 
     private startMatch(match:Match):void {
         match.started = true;
-        match.userA.emit(IoEvent.START_GAME, match.aBoard);
-        match.userB.emit(IoEvent.START_GAME, match.bBoard);
+        match.userA.emit(IoEvent.START_GAME, match.boardA);
+        match.userB.emit(IoEvent.START_GAME, match.boardB);
         match.userA.emit(IoEvent.START_TURN);
     }
 
