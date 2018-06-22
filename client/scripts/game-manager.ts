@@ -19,16 +19,20 @@ class MenuScreen implements StateManager {
 }
 
 class PlayScreen implements StateManager  {
-    private static readonly TILE_SIZE:number = 25;
+    private static readonly BOARD_SIZE:number = 400;
+    private static readonly BOARD_Y:number = 100;
+    private static readonly TILE_SIZE:number = PlayScreen.BOARD_SIZE/12;
     public constructor(private manager:GameManager, private eventManager:EventManager) {}
 
     public init():void {
-        this.manager.game.add.sprite(0, 0, "board");
-        this.manager.game.add.sprite(300, 0, "board");
+        let logo:any = this.manager.game.add.sprite(this.manager.game.world.centerX, 20, "logo");
+        logo.anchor.setTo(0.5, 0);
+        let boardA:any = this.manager.game.add.sprite(0, PlayScreen.BOARD_Y, "board");
+        let boardB:any = this.manager.game.add.sprite(PlayScreen.BOARD_SIZE, PlayScreen.BOARD_Y, "board");
+        boardA.width = boardA.height = boardB.width = boardB.height = PlayScreen.BOARD_SIZE;
     }
 
     public setupBoard(board:Ship[]):void {
-        console.log(board);
         for (let ship of board) {
             this.placeShip(ship);
         }
@@ -37,19 +41,22 @@ class PlayScreen implements StateManager  {
     private placeShip(ship:Ship):void {
         if (ship.horizontal) {
             for (let x = ship.origin.x; x < ship.origin.x+ship.length; x++) {
-                this.placeShipPiece(x, ship.origin.y);
+                this.placeSprite("ship-piece", x, ship.origin.y);
             }
         } else {
             for (let y = ship.origin.y; y < ship.origin.y+ship.length; y++) {
-                this.placeShipPiece(ship.origin.x, y);
+                this.placeSprite("ship-piece", ship.origin.x, y);
             }
         }
     }
 
-    private placeShipPiece(x:number, y:number):void {
-        let screenX:number = (x+1)*PlayScreen.TILE_SIZE - PlayScreen.TILE_SIZE/2;
-        let screenY:number = 300 - ((y+1)*PlayScreen.TILE_SIZE - PlayScreen.TILE_SIZE/2);
-        this.manager.game.add.sprite(screenX, screenY, "ship-piece");
+    private placeSprite(name:string, x:number, y:number):void { //TODO - support placing sprites for second board too
+        let screenY:number = PlayScreen.BOARD_Y + PlayScreen.BOARD_SIZE - PlayScreen.TILE_SIZE; //start from bottom of board
+        let screenX:number = (x+1)*PlayScreen.TILE_SIZE;
+        screenY -= y*PlayScreen.TILE_SIZE;
+        let sprite:any = this.manager.game.add.sprite(screenX, screenY, name);
+        sprite.width = sprite.height = PlayScreen.TILE_SIZE;
+        sprite.anchor.setTo(0.5);
     }
 
     public dispose():void {
@@ -84,6 +91,7 @@ export class GameManager {
             },
             create : () => {
                 this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+                this.game.stage.backgroundColor = "#FFFFFF";
                 this.menuScreen.init();
                 callback();
             },
