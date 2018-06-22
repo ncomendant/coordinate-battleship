@@ -21,14 +21,20 @@ export class App {
 
             user.on(IoEvent.PLAY_RANDOM, () => {
                 if (user.data == null || user.data['matchId'] != null) return;
+                matchManager.joinOpenMatch(user);
             });
 
             user.on(IoEvent.CREATE_PRIVATE, () => {
                 if (user.data == null || user.data['matchId'] != null) return;
+                matchManager.createPrivateMatch(user);
             });
 
-            user.on(IoEvent.JOIN_PRIVATE, () => {
+            user.on(IoEvent.JOIN_PRIVATE, (data:any) => {
                 if (user.data == null || user.data['matchId'] != null) return;
+                let matchId = data['matchId'];
+                if (matchId != null && typeof(matchId) === "string") {
+                    matchManager.joinPrivateMatch(user, matchId);
+                }
             });
 
             user.on('disconnect', function(){

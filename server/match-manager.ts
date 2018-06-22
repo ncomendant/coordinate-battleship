@@ -19,7 +19,7 @@ export class MatchManager {
     }
 
     public joinOpenMatch(user:any):void {
-        if (this.openMatchId === null) {
+        if (this.openMatchId == null) {
             this.openMatchId = this.setupMatch(user).id;
         } else {
             let match:Match = this.matches[this.openMatchId];
@@ -28,17 +28,20 @@ export class MatchManager {
         }
     }
 
-    public createPrivateMatch(user:any):string {
-        return this.setupMatch(user).id;
+    public createPrivateMatch(user:any):void {
+        let matchId:string =this.setupMatch(user).id;
+        user.emit(IoEvent.CREATE_PRIVATE, {matchId:matchId});
     }
 
-    public joinPrivateMatch(user:any, gameId:string):string { //returns error as string, null if successful
-        let match:Match = this.matches[gameId.toLowerCase()];
-        if (match === null) return("Match with ID not found");
-        else if (match.started) return("Match already started.");
-        else {
-            this.startMatch(match, user);
-        }
+    public joinPrivateMatch(user:any, matchId:string):void {
+        let match:Match = this.matches[matchId.toLowerCase()];
+
+        let err:string = null;
+        if (match == null) err = "Match with ID not found";
+        else if (match.started) err = "Match already started.";
+
+        if (err == null) this.startMatch(match, user);
+        else user.emit(IoEvent.START_MATCH, {err:err});
     }
 
     public playAI(user:any):void {

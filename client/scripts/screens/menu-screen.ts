@@ -40,10 +40,11 @@ export class MenuScreen extends Screen {
             this.showWaitMessage("Creating lobby...");
             this.app.io.emit(IoEvent.CREATE_PRIVATE);
             this.app.io.once(IoEvent.CREATE_PRIVATE, (data:any) => {
-                if (data.err !== null) {
-                    alert(data.err);
+                if (data.err != null) {
+                    this.app.ui.alert(data.err);
+                    this.showMenu();
                 } else {
-                    this.showWaitMessage("Match ID: " + data.matchId);
+                    this.showWaitMessage("Match ID for opponent to join: " + data.matchId);
                     this.awaitGameStart();
                 }
             });
@@ -64,6 +65,7 @@ export class MenuScreen extends Screen {
         this.app.io.once(IoEvent.START_MATCH, (data:any) => {
             if (data.err != null) {
                 this.app.ui.alert(data.err);
+                this.showMenu();
             } else {
                 this.hide();
                 this.app.playScreen.init(data.fleet);
