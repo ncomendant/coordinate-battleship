@@ -23,11 +23,9 @@ export class UiManager {
             event.preventDefault();
             if (this.promptMode) {
                 let value = this.$uiInp.val().trim();
-                if (value.length > 0) {
-                    this.$ui.hide();
-                    this.callback(value);
-                    this.callback = null;
-                }
+                this.$ui.hide();
+                this.callback(value);
+                this.callback = null;
             } else {
                 this.$ui.hide();
                 if (this.callback !== null) {
