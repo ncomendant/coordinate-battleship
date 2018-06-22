@@ -39,10 +39,6 @@ export abstract class Screen {
         return btn;
     }
 
-    protected prompt():void {
-
-    }
-
     protected makeSprite(name:string, x:number, y:number, group:any = null):any {
         if (group == null) group = this.stage;
         let sprite:any = this.app.game.add.sprite(x, y, name);

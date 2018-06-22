@@ -50,19 +50,20 @@ export class MenuScreen extends Screen {
         });
 
         this.makeButton('Join Private Match', this.centerX, 450, this.menuGroup, () => {
-            let matchId = prompt("Enter the Match ID:");
-            if (matchId !== null && matchId.trim().length > 0) {
-                this.app.io.emit(IoEvent.JOIN_PRIVATE, {matchId:matchId});
-                this.showWaitMessage("Locating match...");
-                this.awaitGameStart();
-            }
+            this.app.prompt("Enter the match ID:", (matchId:string) => {
+                if (matchId !== null && matchId.trim().length > 0) {
+                    this.app.io.emit(IoEvent.JOIN_PRIVATE, {matchId:matchId});
+                    this.showWaitMessage("Locating match...");
+                    this.awaitGameStart();
+                }
+            });
         });
     }
 
     private awaitGameStart():void {
         this.app.io.once(IoEvent.START_GAME, (data:any) => {
             if (data.err !== null) {
-                alert(data.err);
+                this.app.alert(data.err);
             } else {
                 this.app.playScreen.init(data.board);
             }

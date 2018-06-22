@@ -1,7 +1,7 @@
 import { MenuScreen } from "./screens/menu-screen";
 import { PlayScreen } from "./screens/play-screen";
 
-declare var Phaser;
+declare var Phaser, $;
 
 export class App {
     private _game:any;
@@ -10,7 +10,10 @@ export class App {
     private _menuScreen:MenuScreen;
     private _playScreen:PlayScreen;
 
+    private uiHandler:any;
+
     public constructor(serverUrl:string) {
+        this.setupUi();
         this.loadGame(() => {
             this.connectToServer(serverUrl, () => {
                 this._menuScreen = new MenuScreen(this);
@@ -51,6 +54,67 @@ export class App {
                 callback();
             },
             update : () => {}
+        });
+    }
+
+    private setupUi():void {
+        let $ui:any = $("#ui");
+        let $uiForm:any = $("#uiForm");
+        let $uiInp:any = $("#uiInp");
+
+        this.uiHandler = null;
+        $uiForm.on("submit", (event:any) => {
+            event.preventDefault();
+            if (this.uiHandler === null) return;
+
+            if ($uiInp.is(":visible")) {
+                let value = $("#uiInp").val().trim();
+                if (value.length > 0) {
+                    $ui.hide();
+                    this.uiHandler(value);
+                    this.uiHandler = null;
+                }
+            } else {
+                if (this.uiHandler !== null) {
+                    $ui.hide();
+                    this.uiHandler();
+                    this.uiHandler = null;
+                }
+            }
+        });
+    }
+    
+    public prompt(message:string, callback:(text:string) => void):void {
+        this.showUi(message, callback, true);
+    }
+
+    public alert(message:string, callback:() => void = null):void {
+        this.showUi(message, callback, false);
+    }
+
+    private showUi(message:string, callback:any, showPrompt:boolean):void {
+        let $ui:any = $("#ui");
+        let $uiForm:any = $("#uiForm");
+        let $uiText:any = $("#uiText");
+        let $uiInp:any = $("#uiInp");
+
+        this.uiHandler = callback;
+
+        $uiForm.hide();
+
+        if (showPrompt) {
+            $uiInp.show();
+            $uiInp.val('');
+        }
+        else $uiInp.hide();
+
+        $uiText.html(message);
+
+        $ui.show();
+        
+        $uiForm.fadeIn(500, () => {
+            if (showPrompt) $uiInp.focus();
+            else $ui.focus();
         });
     }
 
