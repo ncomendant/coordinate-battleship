@@ -16,8 +16,8 @@ export class PlayScreen extends Screen {
 
         this.setupBoards();
 
-        this.shipOverlay = this.makeGroup();
-        this.markOverlay = this.makeGroup();
+        this.shipOverlay = this.makeGroup(true);
+        this.markOverlay = this.makeGroup(true);
     }
 
     private setupBoards():void {
@@ -30,10 +30,11 @@ export class PlayScreen extends Screen {
         boardA.width = boardA.height = boardB.width = boardB.height = PlayScreen.BOARD_SIZE;
     }
 
-    public init(ships:Ship[]):void {
-        for (let ship of ships) {
+    public init(fleet:Ship[]):void {
+        for (let ship of fleet) {
             this.placeShip(ship);
         }
+        this.show();
     }
 
     private placeShip(ship:Ship):void {

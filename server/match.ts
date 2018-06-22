@@ -10,7 +10,7 @@ export class Match {
     public started:boolean;
     public turnA:boolean;
 
-    public constructor(public boardA:Ship[], public boardB:Ship[]) {
+    public constructor(public id:string, public fleetA:Ship[], public fleetB:Ship[]) {
         this.userA = null;
         this.userB = null;
 

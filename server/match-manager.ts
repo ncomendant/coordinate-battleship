@@ -2,44 +2,34 @@ import { Match } from "./match";
 import { Ship } from "../shared/ship";
 import { IoEvent } from "../shared/IoEvent";
 
-declare var crypto;
+declare function require(moduleName:string):any;
+
+let crypto:any = require("crypto");
 
 export class MatchManager {
+
+    private static readonly BOT:string = "bot";
+
     private matches:Map<string, Match>;
-    private openMatch:Match;
+    private openMatchId:string;
 
     public constructor() {
         this.matches = new Map();
-        this.openMatch = null;
+        this.openMatchId = null;
     }
 
     public joinOpenMatch(user:any):void {
-        if (this.openMatch === null) {
-            this.openMatch = new Match(this.setupBoard(), this.setupBoard());
-            this.openMatch.userA = user;
-            user.data['matchId'] = 'open';
+        if (this.openMatchId === null) {
+            this.openMatchId = this.setupMatch(user).id;
         } else {
-            let id:string = this.getUniqueId();
-            let match:Match = this.openMatch;
-            match.userB = user;
-            match.userA.data['matchId'] = id;
-            match.userA.data['matchId'] = id;
-            this.matches[id] = match;
-            this.openMatch = null;
-            this.startMatch(match);
+            let match:Match = this.matches[this.openMatchId];
+            this.openMatchId = null;
+            this.startMatch(match, user);
         }
     }
 
-    public temp():Ship[] {
-        return this.setupBoard();
-    }
-
-    public createPrivateMatch(user:any):any {
-        let id:string = this.getUniqueId();
-        let match:Match = new Match(this.setupBoard(), this.setupBoard());
-        match.userA = user;
-        user.data['matchId'] = id;
-        this.matches[id] = match;
+    public createPrivateMatch(user:any):string {
+        return this.setupMatch(user).id;
     }
 
     public joinPrivateMatch(user:any, gameId:string):string { //returns error as string, null if successful
@@ -47,16 +37,35 @@ export class MatchManager {
         if (match === null) return("Match with ID not found");
         else if (match.started) return("Match already started.");
         else {
-            match.userB = user;
-            this.startMatch(match);
+            this.startMatch(match, user);
         }
     }
 
-    private startMatch(match:Match):void {
+    public playAI(user:any):void {
+        let match:Match = this.setupMatch(user);
+        this.startMatch(match, MatchManager.BOT);
+    }
+
+    private setupMatch(userA:any):Match {
+        let id:string = this.getUniqueId();
+        let match:Match = new Match(id, this.setupFleet(), this.setupFleet());
+        this.matches[id] = match;
+        match.userA = userA;
+        userA.data['matchId'] = id;
+        return match;
+    }
+
+    private startMatch(match:Match, userB:any):void {
+        match.userB = userB;
         match.started = true;
-        match.userA.emit(IoEvent.START_GAME, match.boardA);
-        match.userB.emit(IoEvent.START_GAME, match.boardB);
+
+        match.userA.emit(IoEvent.START_MATCH, {fleet:match.fleetA});
         match.userA.emit(IoEvent.START_TURN);
+
+        if (userB !== MatchManager.BOT) {
+            userB.data['matchId'] = match.id;
+            match.userB.emit(IoEvent.START_MATCH, {fleet:match.fleetB});
+        }
     }
 
     private intersects(ship:Ship, x:number, y:number):boolean {
@@ -84,8 +93,8 @@ export class MatchManager {
         return false;
     }
 
-    private validShip(ship:Ship, board:Ship[]):boolean {
-        for (let existingShip of board) {
+    private validShip(ship:Ship, fleet:Ship[]):boolean {
+        for (let existingShip of fleet) {
             if (this.shipsIntersects(ship, existingShip)) return false;
         }
         return true;
@@ -99,23 +108,23 @@ export class MatchManager {
         return id;
     }
 
-    private setupBoard():Ship[] {
-        let board:Ship[] = [];
-        this.placeShip("Frigate", 2, board);
-        this.placeShip("Destroyer", 3, board);
-        this.placeShip("Cruiser", 4, board);
-        this.placeShip("Carrier", 5, board);
-        return board;
+    private setupFleet():Ship[] {
+        let fleet:Ship[] = [];
+        this.placeShip("Frigate", 2, fleet);
+        this.placeShip("Destroyer", 3, fleet);
+        this.placeShip("Cruiser", 4, fleet);
+        this.placeShip("Carrier", 5, fleet);
+        return fleet;
     }
 
-    private placeShip(name:string, length:number, board:Ship[]):void {
+    private placeShip(name:string, length:number, fleet:Ship[]):void {
         let ship:Ship = new Ship(name, length);
         do {
             ship.horizontal = Math.random() < 0.5;
             ship.origin.x = (ship.horizontal) ? this.randNum(0, 10-length) : this.randNum(0, 10);
             ship.origin.y = (ship.horizontal) ? this.randNum(0, 10) : this.randNum(0, 10-length);
-        } while (!this.validShip(ship, board));
-        board.push(ship);
+        } while (!this.validShip(ship, fleet));
+        fleet.push(ship);
     }
 
     private randNum(min:number, max:number):number {

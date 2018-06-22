@@ -61,11 +61,12 @@ export class MenuScreen extends Screen {
     }
 
     private awaitGameStart():void {
-        this.app.io.once(IoEvent.START_GAME, (data:any) => {
-            if (data.err !== null) {
+        this.app.io.once(IoEvent.START_MATCH, (data:any) => {
+            if (data.err != null) {
                 this.app.ui.alert(data.err);
             } else {
-                this.app.playScreen.init(data.board);
+                this.hide();
+                this.app.playScreen.init(data.fleet);
             }
         });
     }
