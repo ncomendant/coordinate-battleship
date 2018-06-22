@@ -15,7 +15,6 @@ export class App {
         var io = require('socket.io')(server);
         io.on('connection', (user:any) => {
             user.data = {};
-            io.emit(IoEvent.START_GAME, this.matchManager.temp());
             
             // user.on('event', function(data){
 

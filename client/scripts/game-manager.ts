@@ -6,15 +6,60 @@ declare var Phaser;
 
 class MenuScreen implements StateManager {
 
+    private group:any;
+
     public constructor(private manager:GameManager, private eventManager:EventManager) {}
+    
 
     public init():void {
-        //this.manager.game.add.sprite(0, 0, "logo");
-        // scoreText = this.game.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000000' });
+        this.group = this.manager.game.add.group();
+        this.group.inputEnableChildren = true;
+
+        let centerX:number = this.manager.game.world.centerX;
+
+        let logo:any = this.manager.game.add.sprite(centerX, 20, "logo");
+        logo.anchor.setTo(0.5, 0);
+
+        this.makeBtn('Play vs Random Opponent', 150, () => {
+
+        });
+
+        this.makeBtn('Play vs AI', 250, () => {
+
+        });
+
+        this.makeBtn('Create Private Match', 350, () => {
+
+        });
+
+        this.makeBtn('Join Private Match', 450, () => {
+
+        });
+    }
+
+    private makeBtn(text:string, y:number, onClick:() => void):any {
+        let btn:any = this.manager.game.add.text(this.manager.game.world.centerX, y, text, { fontSize: '38px', fill: '#000000' }, this.group);
+        btn.anchor.setTo(0.5, 0);
+
+        console.log(btn.events);
+
+        btn.events.onInputOver.add(()=>{
+            btn.addColor('#ff9400', 0);
+        }, this);
+
+        btn.events.onInputOut.add(()=>{
+            btn.addColor('#000000', 0);
+        }, this);
+
+        btn.events.onInputDown.add(()=>{
+            onClick();
+        }, this);
+        return btn;
     }
 
     public dispose():void {
-
+        this.group.destroy();
+        this.group = null;
     }
 }
 
