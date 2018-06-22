@@ -20,7 +20,7 @@ export class EventManager {
         }
     }
 
-    public emit(eventName:string, data:any):void {
+    public emit(eventName:string, data:any = null):void {
         if (this.eventHandlers.has(eventName)) {
             for (let handler of this.eventHandlers[eventName]) {
                 handler(data);
