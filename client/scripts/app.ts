@@ -65,18 +65,16 @@ export class App {
         this.uiHandler = null;
         $uiForm.on("submit", (event:any) => {
             event.preventDefault();
-            if (this.uiHandler === null) return;
-
-            if ($uiInp.is(":visible")) {
+            if ($uiInp.is(":visible")) { //is prompt
                 let value = $("#uiInp").val().trim();
                 if (value.length > 0) {
                     $ui.hide();
                     this.uiHandler(value);
                     this.uiHandler = null;
                 }
-            } else {
+            } else { //is alert
+                $ui.hide();
                 if (this.uiHandler !== null) {
-                    $ui.hide();
                     this.uiHandler();
                     this.uiHandler = null;
                 }
