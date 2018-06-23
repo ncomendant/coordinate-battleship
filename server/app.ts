@@ -58,7 +58,9 @@ export class App {
             });
 
             user.on('disconnect', function(){
-                //TODO - remove from match (if applicable)
+                //ignore users who are not in a match
+                if (user.data == null || user.data['matchId'] == null) return;
+                matchManager.removeUser(user);
             });
         });
         server.listen(port);

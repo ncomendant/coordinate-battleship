@@ -29,6 +29,27 @@ export class MatchManager {
         }
     }
 
+    public removeUser(user:any):void {
+        let match:Match = this.matches[user.data['matchId']];
+        user.data['matchId'] = null;
+        if (match == null) return;
+
+        if (match.active) { // match is underway
+            if (match.userA === user) {
+                match.userA = null;
+                if (this.realUser(match.userB)) match.userB.emit(IoEvent.ENEMY_FLED);
+            } else if (match.userB === user) {
+                match.userB = null;
+                if (this.realUser(match.userA)) match.userA.emit(IoEvent.ENEMY_FLED);
+            }
+            this.endMatch(match);
+        } else { // match is pending or completed
+            match.userA = null;
+            match.userB = null;
+            this.endMatch(match);
+        }
+    }
+
     public attack(user:any, coords:CoordinatePair):void {
         let match:Match = this.matches[user.data.matchId];
 
@@ -65,10 +86,17 @@ export class MatchManager {
     }
 
     private endMatch(match:Match):void {
-        if (this.realUser(match.userA)) match.userA.emit(IoEvent.ENEMY_FLEET, {fleet:match.fleetB});
-        if (this.realUser(match.userB)) match.userB.emit(IoEvent.ENEMY_FLEET, {fleet:match.fleetA});
+        if (this.realUser(match.userA)) {
+            match.userA.emit(IoEvent.ENEMY_FLEET, {fleet:match.fleetB});
+            match.userA.data['matchId'] = null;
+        }
+        if (this.realUser(match.userB)) {
+            match.userB.emit(IoEvent.ENEMY_FLEET, {fleet:match.fleetA});
+            match.userB.data['matchId'] = null;
+        }
+        if (match.id === this.openMatchId) this.openMatchId = null;
         match.active = false;
-        this.matches.delete(match.id);
+        delete this.matches[match.id];
     }
 
     private processAttack(coords:CoordinatePair, attacker:any, attacked:any, hitMap:boolean[][], fleet:Ship[]):boolean { //returns true if all ships destroyed
