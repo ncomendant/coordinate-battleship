@@ -46,7 +46,7 @@ export class PlayScreen extends Screen {
             let shipName:string = data['shipName'];
             let shipSunk:boolean = data['shipSunk'];
 
-            this.playSound("explosion-sound");
+            this.app.playSound("explosion");
             this.placeTileSprite("explosion", myBoard, coords.x, coords.y, this.markOverlay);
             let message:string = (myBoard) ? "Your " : "Enemy ";
             message += shipName.toLowerCase() + " was ";
@@ -67,7 +67,7 @@ export class PlayScreen extends Screen {
             let myBoard:boolean = data['myBoard'];
             let coords:CoordinatePair = data['coords'];
 
-            this.playSound("miss-sound");
+            this.app.playSound("miss");
             this.placeTileSprite("miss", myBoard, coords.x, coords.y, this.markOverlay);
 
             let message:string = (myBoard) ? "Enemy attack missed." : "Your attack missed.";
@@ -79,7 +79,7 @@ export class PlayScreen extends Screen {
         this.app.io.on(IoEvent.ALREADY_ATTACKED, (data:any) => {
             let myBoard:boolean = data['myBoard'];
 
-            this.playSound("miss-sound");
+            this.app.playSound("miss");
 
             let message:string = (myBoard) ? "Enemy already attacked that location." : "You already attacked that location.";
             this.notify(message);
@@ -100,10 +100,6 @@ export class PlayScreen extends Screen {
                 window.location.reload(true);
             });
         });
-    }
-
-    private playSound(soundName:string):void {
-        //TODO
     }
 
     private notify(message:string):void {

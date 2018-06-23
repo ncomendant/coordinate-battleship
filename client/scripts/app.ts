@@ -11,7 +11,9 @@ export class App {
     private _menuScreen:MenuScreen;
     private _playScreen:PlayScreen;
 
-    private _ui:UiManager
+    private _ui:UiManager;
+
+    private soundMap:Map<string, any>;
 
     public constructor(serverUrl:string) {
         this._ui = new UiManager();
@@ -39,6 +41,8 @@ export class App {
     }
 
     private loadGame(callback:() => void):void {
+        this.soundMap = new Map();
+
         this._game = new Phaser.Game(800, 600, Phaser.AUTO, 'game', {
             preload : () => {
                 this.game.load.image('logo', 'rsc/logo.png');
@@ -47,9 +51,14 @@ export class App {
                 this.game.load.image('board', 'rsc/small-board.png');
                 this.game.load.image('ship-piece', 'rsc/ship-piece.png');
                 this.game.load.image('background', 'rsc/bg.png');
+                this.game.load.audio('explosion','rsc/explosion.mp3');
+                this.game.load.audio('miss','rsc/miss.mp3');
             },
             create : () => {
                 this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+
+                this.soundMap['explosion'] = this.game.add.audio('explosion');
+                this.soundMap['miss'] = this.game.add.audio('miss');
 
                 this.game.add.sprite(0, 0, "background");
 
@@ -60,6 +69,10 @@ export class App {
             },
             update : () => {}
         });
+    }
+
+    public playSound(key:string, volume:number = 1):void {
+        this.soundMap[key].play("", 0, volume, false, true);
     }
 
     public get game():any {
