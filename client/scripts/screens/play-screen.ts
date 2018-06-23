@@ -164,10 +164,13 @@ export class PlayScreen extends Screen {
         let chunks:string[] = text.split(",");
         if (chunks.length !== 2) return "Incorrect comma use.";
 
+        let intRegEx:any = /^[-+]?\d+$/;
+        if (!intRegEx.test(chunks[0]) || !intRegEx.test(chunks[1])) return "Invalid numbers for coordiantes.";
+
         let x:number = parseInt(chunks[0]);
         let y:number = parseInt(chunks[1]);
 
-        if (isNaN(x) || isNaN(y)) return "Invalid numbers for coordiantes.";
+        // if (isNaN(x) || isNaN(y)) return "Invalid numbers for coordiantes.";
         if (x < -5) return "x-coordinate cannot be less than -5."
         if (y < -5) return "y-coordinate cannot be less than -5."
         if (x > 5) return "x-coordinate cannot be greater than 5."
