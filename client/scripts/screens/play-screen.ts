@@ -8,7 +8,6 @@ export class PlayScreen extends Screen {
     private static readonly BOARD_SIZE:number = 400;
     private static readonly BOARD_Y:number = 100;
     private static readonly TILE_SIZE:number = PlayScreen.BOARD_SIZE/12;
-    private static readonly SHIPS_PER_FLEET:number = 4;
 
     private shipOverlay:any;
     private markOverlay:any;
