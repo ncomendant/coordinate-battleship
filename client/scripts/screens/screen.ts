@@ -49,7 +49,7 @@ export abstract class Screen {
 
     protected makeLabel(text:string, x:number, y:number, group:any = null):any {
         if (group == null) group = this.stage;
-        let label:any = this.app.game.add.text(x, y, text,  { fontSize: '38px', fill: '#000000'}, group);
+        let label:any = this.app.game.add.text(x, y, text,  { fontSize: '38px', fill: '#000000', align:'center'}, group);
         label.anchor.setTo(0.5, 0);
         return label;
     }

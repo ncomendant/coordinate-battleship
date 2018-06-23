@@ -44,7 +44,7 @@ export class MenuScreen extends Screen {
                     this.app.ui.alert(data.err);
                     this.showMenu();
                 } else {
-                    this.showWaitMessage("Match ID for opponent to join: " + data.matchId);
+                    this.showWaitMessage("Match ID for opponent to join:\n" + data.matchId);
                     this.awaitGameStart();
                 }
             });
@@ -52,11 +52,12 @@ export class MenuScreen extends Screen {
 
         this.makeButton('Join Private Match', this.centerX, 450, this.menuGroup, () => {
             this.app.ui.prompt("Enter the match ID:", null, (matchId:string) => {
-                if (matchId !== null && matchId.trim().length > 0) {
-                    this.app.io.emit(IoEvent.JOIN_PRIVATE, {matchId:matchId});
-                    this.showWaitMessage("Locating match...");
-                    this.awaitGameStart();
-                }
+                if (matchId == null) return;
+                let trimmedMatchId:string = matchId.trim();
+                if (trimmedMatchId.length === 0 || trimmedMatchId.length > 100) return;
+                this.app.io.emit(IoEvent.JOIN_PRIVATE, {matchId:trimmedMatchId});
+                this.showWaitMessage("Locating match...");
+                this.awaitGameStart();
             });
         });
     }
@@ -79,7 +80,7 @@ export class MenuScreen extends Screen {
 
     private setupWaitGroup():void {
         this.waitGroup = this.makeGroup();
-        this.waitLab = this.makeLabel("Please wait...", this.centerX, this.centerY, this.waitGroup);
+        this.waitLab = this.makeLabel("Please wait...", this.centerX, this.centerY-30, this.waitGroup);
         this.waitGroup.visible = false;
     }
 
