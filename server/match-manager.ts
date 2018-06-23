@@ -2,6 +2,7 @@ import { Match } from "./match";
 import { Ship } from "../shared/ship";
 import { IoEvent } from "../shared/IoEvent";
 import { CoordinatePair } from "../shared/coordinate-pair";
+import { MatchUtil } from "./matchutil";
 
 declare function require(moduleName:string):any;
 
@@ -63,7 +64,7 @@ export class MatchManager {
 
     private botAttack(match:Match):void { // dumb AI always picks random spot to attack
         setTimeout(() => { //delay bot's reponse time
-            let coords:CoordinatePair = new CoordinatePair(this.randNum(0,10),this.randNum(0,10));
+            let coords:CoordinatePair = new CoordinatePair(MatchUtil.randNum(0,10), MatchUtil.randNum(0,10));
             this.completeAttack(coords, match);
         }, MatchManager.BOT_RESPONSE_TIME);
     }
@@ -221,14 +222,6 @@ export class MatchManager {
         return true;
     }
 
-    private getUniqueId():string {
-        let id:string = null;
-        do {
-            id = crypto.randomBytes(64).toString('hex').slice(0, 6);
-        } while (this.matches.has(id));
-        return id;
-    }
-
     private setupFleet():Ship[] {
         let fleet:Ship[] = [];
         this.placeShip("Frigate", 2, fleet);
@@ -238,18 +231,21 @@ export class MatchManager {
         return fleet;
     }
 
+    private getUniqueId():string {
+        let id = null;
+        do {
+            id = MatchUtil.generateId();
+        } while (this.matches.has(id));
+        return id;
+    }
+
     private placeShip(name:string, length:number, fleet:Ship[]):void {
         let ship:Ship = new Ship(name, length);
         do {
             ship.horizontal = Math.random() < 0.5;
-            ship.origin.x = (ship.horizontal) ? this.randNum(0, 10-length) : this.randNum(0, 10);
-            ship.origin.y = (ship.horizontal) ? this.randNum(0, 10) : this.randNum(0, 10-length);
+            ship.origin.x = (ship.horizontal) ? MatchUtil.randNum(0, 10-length) : MatchUtil.randNum(0, 10);
+            ship.origin.y = (ship.horizontal) ? MatchUtil.randNum(0, 10) : MatchUtil.randNum(0, 10-length);
         } while (!this.validShip(ship, fleet));
         fleet.push(ship);
-    }
-
-    private randNum(min:number, max:number):number {
-        let gap:number = max-min+1;
-        return Math.floor(Math.random()*gap) + min;
     }
 }
