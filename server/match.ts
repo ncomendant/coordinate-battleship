@@ -15,7 +15,7 @@ export class Match {
         this.userB = null;
 
         this.hitMapA = new Array(11).fill(new Array(11).fill(false));
-        this.hitMapB = this.hitMapA.slice(0);
+        this.hitMapB = new Array(11).fill(new Array(11).fill(false));
 
         this.active = false;
         this.turnA = true;
