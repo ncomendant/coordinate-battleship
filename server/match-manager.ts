@@ -1,7 +1,7 @@
 import { Match } from "./match";
-import { Ship } from "../shared/ship";
-import { IoEvent } from "../shared/IoEvent";
-import { CoordinatePair } from "../shared/coordinate-pair";
+import { Ship } from "../battleship-shared/ship";
+import { IoEvent } from "../battleship-shared/io-event";
+import { CoordinatePair } from "../battleship-shared/coordinate-pair";
 import { MatchUtil } from "./matchutil";
 
 export class MatchManager {

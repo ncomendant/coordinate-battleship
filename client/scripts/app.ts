@@ -96,4 +96,4 @@ export class App {
     }
 }
 
-new App("http://127.0.0.1:3001");
+new App("http://localhost:3001");

@@ -1,8 +1,8 @@
 import { Screen } from "./screen";
-import { Ship } from "../../../shared/ship";
+import { Ship } from "../../../battleship-shared/ship";
 import { App } from "../app";
-import { IoEvent } from "../../../shared/IoEvent";
-import { CoordinatePair } from "../../../shared/coordinate-pair";
+import { IoEvent } from "../../../battleship-shared/io-event";
+import { CoordinatePair } from "../../../battleship-shared/coordinate-pair";
 
 export class PlayScreen extends Screen {
     private static readonly BOARD_SIZE:number = 400;
@@ -19,7 +19,6 @@ export class PlayScreen extends Screen {
 
     private shipsRemaining:number;
     private enemyShipsRemaining:number;
-    
 
     public constructor(app:App) {
         super(app);

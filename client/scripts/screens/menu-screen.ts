@@ -1,6 +1,6 @@
 import { Screen } from "./screen";
 import { App } from "../app";
-import { IoEvent } from "../../../shared/IoEvent";
+import { IoEvent } from "../../../battleship-shared/io-event";
 
 export class MenuScreen extends Screen {
 

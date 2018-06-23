@@ -1,4 +1,4 @@
-import { Ship } from "../shared/ship"; 
+import { Ship } from "../battleship-shared/ship"; 
 
 export class Match {
     public userA:any;

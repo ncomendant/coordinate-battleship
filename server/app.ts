@@ -1,5 +1,5 @@
 import { MatchManager } from "./match-manager";
-import { IoEvent } from "../shared/IoEvent";
+import { IoEvent } from "../battleship-shared/io-event";
 
 declare function require(moduleName:string):any;
 
