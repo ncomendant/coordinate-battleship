@@ -11,7 +11,7 @@ export class MatchUtil {
             + this.NOUNS[Math.floor(Math.random()*this.NOUNS.length)]
             + this.randNum(0, 99);
 
-        return  id;
+        return  id.toLowerCase();
     }
     
 

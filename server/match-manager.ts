@@ -130,8 +130,6 @@ export class MatchManager {
         return false;
     }
 
-
-
     private realUser(user:any):boolean {
         return user != null && user !== MatchManager.BOT;
     }
@@ -149,7 +147,8 @@ export class MatchManager {
     }
 
     public createPrivateMatch(user:any):void {
-        let matchId:string =this.setupMatch(user).id;
+
+        let matchId:string = this.setupMatch(user).id;
         user.emit(IoEvent.CREATE_PRIVATE, {matchId:matchId});
     }
 
