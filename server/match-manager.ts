@@ -1,6 +1,7 @@
 import { Match } from "./match";
 import { Ship } from "../shared/ship";
 import { IoEvent } from "../shared/IoEvent";
+import { CoordinatePair } from "../shared/coordinate-pair";
 
 declare function require(moduleName:string):any;
 
@@ -28,6 +29,91 @@ export class MatchManager {
         }
     }
 
+    public attack(user:any, coords:CoordinatePair):void {
+        let match:Match = this.matches[user.data.matchId];
+
+        //Make sure match can be found and it's this user's turn
+        if (match == null || !match.active) return;
+        if (match.turnA && match.userA !== user) return;
+        if (!match.turnA && match.userB !== user) return;
+        
+        this.completeAttack(coords, match);
+    }
+
+    private botAttack(match:Match):void { // dumb AI always picks random spot to attack
+        let coords:CoordinatePair = new CoordinatePair(this.randNum(0,10),this.randNum(0,10));
+        this.completeAttack(coords, match);
+    }
+
+    private completeAttack(coords:CoordinatePair, match:Match):void {
+        let gameOver:boolean = null;
+        if (match.turnA)  {
+            gameOver = this.processAttack(coords, match.userA, match.userB, match.hitMapB, match.fleetB);
+        } else {
+            gameOver = this.processAttack(coords, match.userB, match.userA, match.hitMapA, match.fleetA);
+        }
+
+        if (gameOver) {
+            match.active = false;
+            this.matches.delete(match.id)
+            return;
+        } else {
+            match.turnA = !match.turnA;
+            let currentUser:any = (match.turnA) ? match.userA : match.userB;
+            if (currentUser === MatchManager.BOT) this.botAttack(match);
+        }
+    }
+
+    private processAttack(coords:CoordinatePair, attacker:any, attacked:any, hitmap:boolean[][], fleet:Ship[]):boolean { //returns true if all ships destroyed
+        let realAttacker:boolean = this.realUser(attacker);
+        let realAttacked:boolean = this.realUser(attacked);
+        if (hitmap[coords.x][coords.y]) { //spot already attacked
+            if (realAttacker) attacker.emit(IoEvent.ALREADY_ATTACKED, {myBoard:false});
+            if (realAttacked) attacked.emit(IoEvent.ALREADY_ATTACKED, {myBoard:true});
+        } else { //spot not attacked before
+            hitmap[coords.x][coords.y] = true;
+            let ship:Ship = this.checkForHit(coords, hitmap, fleet);
+            if (ship != null) { //ship was hit
+                let shipSunk:boolean = ship.health === 0;
+                let gameOver:boolean = shipSunk && !this.alive(fleet);
+                if (realAttacker) attacker.emit(IoEvent.HIT, {myBoard:false, coords:coords, shipName:ship.name, shipSunk:shipSunk, gameOver:gameOver}); 
+                if (realAttacked) attacked.emit(IoEvent.HIT, {myBoard:true, coords:coords, shipName:ship.name, shipSunk:shipSunk, gameOver:gameOver}); 
+                if (gameOver) return true;
+            } else { //attack missed
+                if (realAttacker) attacker.emit(IoEvent.MISS, {myBoard:false, coords:coords}); 
+                if (realAttacked) attacked.emit(IoEvent.MISS, {myBoard:true, coords:coords}); 
+            }
+        }
+        return false;
+    }
+
+    private alive(fleet:Ship[]):boolean {
+        for (let ship of fleet) {
+            if (ship.health > 0) return true;
+        }
+        return false;
+    }
+
+
+
+    private realUser(user:any):boolean {
+        return user != null && user !== MatchManager.BOT;
+    }
+
+    private checkForHit(coords:CoordinatePair, hitmap:boolean[][], fleet:Ship[]):Ship {
+        hitmap[coords.x][coords.y] = true;
+        for (let ship of fleet) {
+            if (ship.health === 0) continue;
+            if (this.intersects(ship, coords.x, coords.y)) {
+                ship.health--;
+                return ship;
+            }
+        }
+        return null;
+    }
+
+
+
     public createPrivateMatch(user:any):void {
         let matchId:string =this.setupMatch(user).id;
         user.emit(IoEvent.CREATE_PRIVATE, {matchId:matchId});
@@ -38,7 +124,7 @@ export class MatchManager {
 
         let err:string = null;
         if (match == null) err = "Match with ID not found";
-        else if (match.started) err = "Match already started.";
+        else if (match.active) err = "Match already started.";
 
         if (err == null) this.startMatch(match, user);
         else user.emit(IoEvent.START_MATCH, {err:err});
@@ -60,14 +146,13 @@ export class MatchManager {
 
     private startMatch(match:Match, userB:any):void {
         match.userB = userB;
-        match.started = true;
+        match.active = true;
 
-        match.userA.emit(IoEvent.START_MATCH, {fleet:match.fleetA});
-        match.userA.emit(IoEvent.START_TURN);
+        match.userA.emit(IoEvent.START_MATCH, {fleet:match.fleetA, starting:true});
 
-        if (userB !== MatchManager.BOT) {
+        if (this.realUser(userB)) { //second player might be bot
             userB.data['matchId'] = match.id;
-            match.userB.emit(IoEvent.START_MATCH, {fleet:match.fleetB});
+            match.userB.emit(IoEvent.START_MATCH, {fleet:match.fleetB, starting:false});
         }
     }
 

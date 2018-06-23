@@ -24,13 +24,15 @@ export class UiManager {
             if (this.promptMode) {
                 let value = this.$uiInp.val().trim();
                 this.$ui.hide();
-                this.callback(value);
+                let callback:any = this.callback;
                 this.callback = null;
+                callback(value);
             } else {
                 this.$ui.hide();
-                if (this.callback !== null) {
-                    this.callback();
+                if (this.callback != null) {
+                    let callback:any = this.callback;
                     this.callback = null;
+                    callback();
                 }
             }
         });

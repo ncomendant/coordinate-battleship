@@ -37,6 +37,26 @@ export class App {
                 }
             });
 
+            user.on(IoEvent.ATTACK, (data:any) => {
+                //Abort on invalid user state
+                if (user.data == null || user.data['matchId'] == null) return;
+
+                //Abort on invalid data
+                if (data.coords == null) return;
+                if (typeof data.coords['x'] !== "number") return;
+                if (typeof data.coords['y'] !== "number") return;
+                if (data.coords['x']%1 !== 0 || data.coords['y']%1 !== 0) return;
+                if (data.coords['x'] < -5 || data.coords['y'] > 5) return;
+                if (data.coords['y'] < -5 || data.coords['y'] > 5) return;
+
+                //convert coords to array indicies
+                data.coords.x += 5;
+                data.coords.y += 5;
+
+                //Process
+                matchManager.attack(user, data.coords);
+            });
+
             user.on('disconnect', function(){
                 //TODO - remove from match (if applicable)
             });

@@ -7,11 +7,12 @@ export class IoEvent {
     public static readonly START_MATCH:string = "start match";
 
     //Play State
-    public static readonly START_TURN:string = "start turn";
     public static readonly ATTACK:string = "attack";
     public static readonly ENEMY_FLED:string = "enemy fled";
-    public static readonly VICTORY:string = "victory";
-    public static readonly DEFEAT:string = "defeat";
+
+    public static readonly HIT:string = "hit"; //myBoard:boolean, gameOver:boolean, coords:CoordinatePair, shipName:string, shipSunk:boolean
+    public static readonly MISS:string = "miss"; //myBoard:boolean, coords:CoordinatePair
+    public static readonly ALREADY_ATTACKED:string = "already attacked"; //myBoard:boolean
     
     private constructor(){}
 }
