@@ -54,7 +54,7 @@ export class PlayScreen extends Screen {
             this.notify(message);
 
             if (matchOver) {
-                let message:string = (myBoard) ? "Your fleet was defeated!" : "Your fleet was victorious!";
+                let message:string = (myBoard) ? "Defeat!<br />Your fleet was destroyed!" : "Victory!<br />The enemy fleet has been destroyed!";
                 this.app.ui.alert(message, () => {
                     window.location.reload(true);
                 });
@@ -92,6 +92,13 @@ export class PlayScreen extends Screen {
             for (let ship of fleet) {
                 this.placeShip(ship, false);
             }
+        });
+
+        this.app.io.on(IoEvent.ENEMY_FLED, (data:any) => {
+            let message:string = "Victory!<br />The enemy has fled.";
+            this.app.ui.alert(message, () => {
+                window.location.reload(true);
+            });
         });
     }
 

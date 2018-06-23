@@ -67,6 +67,7 @@ export class MenuScreen extends Screen {
                 this.app.ui.alert(data.err);
                 this.showMenu();
             } else {
+                this.app.ui.close();
                 this.hide();
                 this.app.playScreen.init(data.fleet, data.starting);
             }
