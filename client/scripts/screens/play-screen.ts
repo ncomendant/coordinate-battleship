@@ -11,13 +11,15 @@ export class PlayScreen extends Screen {
 
     private shipOverlay:any;
     private markOverlay:any;
-
     private textOverlay:any;
+
     private shipLab:any;
     private enemyShipLab:any;
+    private notificationLab:any;
 
     private shipsRemaining:number;
     private enemyShipsRemaining:number;
+    
 
     public constructor(app:App) {
         super(app);
@@ -125,6 +127,8 @@ export class PlayScreen extends Screen {
     private setupText():void {
         this.shipLab = this.makeLabel("", PlayScreen.BOARD_SIZE/2, PlayScreen.BOARD_Y, 12, this.textOverlay);
         this.enemyShipLab = this.makeLabel("", PlayScreen.BOARD_SIZE + PlayScreen.BOARD_SIZE/2, PlayScreen.BOARD_Y, 12, this.textOverlay);
+
+        this.notificationLab = this.makeLabel("", this.centerX, PlayScreen.BOARD_Y-30, 24, this.textOverlay);
     }
 
     private updateShipLabels():void {
@@ -133,8 +137,7 @@ export class PlayScreen extends Screen {
     }
 
     private notify(message:string):void {
-        //TODO
-        console.log(message);
+        this.notificationLab.text = message;
     }
 
     private startTurn(previousInp:string = null):void {
