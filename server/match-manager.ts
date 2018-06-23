@@ -10,6 +10,7 @@ let crypto:any = require("crypto");
 export class MatchManager {
 
     private static readonly BOT:string = "bot";
+    private static readonly BOT_RESPONSE_TIME:number = 2000;
 
     private matches:Map<string, Match>;
     private openMatchId:string;
@@ -41,8 +42,10 @@ export class MatchManager {
     }
 
     private botAttack(match:Match):void { // dumb AI always picks random spot to attack
-        let coords:CoordinatePair = new CoordinatePair(this.randNum(0,10),this.randNum(0,10));
-        this.completeAttack(coords, match);
+        setTimeout(() => { //delay bot's reponse time
+            let coords:CoordinatePair = new CoordinatePair(this.randNum(0,10),this.randNum(0,10));
+            this.completeAttack(coords, match);
+        }, MatchManager.BOT_RESPONSE_TIME);
     }
 
     private completeAttack(coords:CoordinatePair, match:Match):void {
