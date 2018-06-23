@@ -71,6 +71,9 @@ export class MenuScreen extends Screen {
                 this.app.playScreen.init(data.fleet, data.starting);
             }
         });
+        this.app.ui.alert("Click OK to cancel.", function(){
+            window.location.reload();
+        });
     }
 
     private setupWaitGroup():void {
