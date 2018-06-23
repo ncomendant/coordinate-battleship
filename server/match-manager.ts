@@ -4,10 +4,6 @@ import { IoEvent } from "../shared/IoEvent";
 import { CoordinatePair } from "../shared/coordinate-pair";
 import { MatchUtil } from "./matchutil";
 
-declare function require(moduleName:string):any;
-
-let crypto:any = require("crypto");
-
 export class MatchManager {
     private static readonly BOT:string = "bot";
     private static readonly BOT_RESPONSE_TIME:number = 2000;
@@ -113,8 +109,8 @@ export class MatchManager {
             if (ship != null) { //ship was hit
                 let shipSunk:boolean = ship.health === 0;
                 let matchOver:boolean = shipSunk && !this.alive(fleet);
-                if (realAttacker) attacker.emit(IoEvent.HIT, {myBoard:false, coords:coords, shipName:ship.name, shipSunk:shipSunk, matchOver:matchOver}); 
-                if (realAttacked) attacked.emit(IoEvent.HIT, {myBoard:true, coords:coords, shipName:ship.name, shipSunk:shipSunk, matchOver:matchOver}); 
+                if (realAttacker) attacker.emit(IoEvent.HIT, {myBoard:false, coords:coords, shipName:ship.name, shipSunk:shipSunk}); 
+                if (realAttacked) attacked.emit(IoEvent.HIT, {myBoard:true, coords:coords, shipName:ship.name, shipSunk:shipSunk}); 
                 if (matchOver) return true;
             } else { //attack missed
                 if (realAttacker) attacker.emit(IoEvent.MISS, {myBoard:false, coords:coords}); 

@@ -8,30 +8,34 @@ export class PlayScreen extends Screen {
     private static readonly BOARD_SIZE:number = 400;
     private static readonly BOARD_Y:number = 100;
     private static readonly TILE_SIZE:number = PlayScreen.BOARD_SIZE/12;
+    private static readonly SHIPS_PER_FLEET:number = 4;
 
     private shipOverlay:any;
     private markOverlay:any;
+
+    private textOverlay:any;
+    private shipLab:any;
+    private enemyShipLab:any;
+
+    private shipsRemaining:number;
+    private enemyShipsRemaining:number;
 
     public constructor(app:App) {
         super(app);
 
         this.setupBoards();
+        this.setupText();
 
         this.shipOverlay = this.makeGroup(true);
         this.markOverlay = this.makeGroup(true);
-    }
-
-    private setupBoards():void {
-        let boardA:any = this.makeSprite("board", 0, PlayScreen.BOARD_Y);
-        let boardB:any = this.makeSprite("board", PlayScreen.BOARD_SIZE, PlayScreen.BOARD_Y);
-        
-        boardA.anchor.setTo(0, 0);
-        boardB.anchor.setTo(0, 0);
-
-        boardA.width = boardA.height = boardB.width = boardB.height = PlayScreen.BOARD_SIZE;
+        this.textOverlay = this.makeGroup(true);
     }
 
     public init(fleet:Ship[], starting:boolean):void {
+        this.shipsRemaining = fleet.length;
+        this.enemyShipsRemaining = fleet.length;
+        this.updateShipLabels();
+
         for (let ship of fleet) {
             this.placeShip(ship, true);
         }
@@ -41,7 +45,6 @@ export class PlayScreen extends Screen {
 
         this.app.io.on(IoEvent.HIT, (data:any) => {
             let myBoard:boolean = data['myBoard'];
-            let matchOver:boolean = data['matchOver'];
             let coords:CoordinatePair = data['coords'];
             let shipName:string = data['shipName'];
             let shipSunk:boolean = data['shipSunk'];
@@ -51,7 +54,15 @@ export class PlayScreen extends Screen {
             let message:string = (myBoard) ? "Your " : "Enemy ";
             message += shipName.toLowerCase() + " was ";
             message += (shipSunk) ? "sunk!" : "hit.";
+
             this.notify(message);
+
+            let matchOver:boolean = false;
+            if (shipSunk) {
+                if (myBoard && --this.shipsRemaining === 0) matchOver = true;
+                if (!myBoard && --this.enemyShipsRemaining === 0) matchOver = true;
+                this.updateShipLabels();
+            }
 
             if (matchOver) {
                 let message:string = (myBoard) ? "Defeat!<br />Your fleet was destroyed!" : "Victory!<br />The enemy fleet has been destroyed!";
@@ -100,6 +111,26 @@ export class PlayScreen extends Screen {
                 window.location.reload(true);
             });
         });
+    }
+
+    private setupBoards():void {
+        let boardA:any = this.makeSprite("board", 0, PlayScreen.BOARD_Y);
+        let boardB:any = this.makeSprite("board", PlayScreen.BOARD_SIZE, PlayScreen.BOARD_Y);
+        
+        boardA.anchor.setTo(0, 0);
+        boardB.anchor.setTo(0, 0);
+
+        boardA.width = boardA.height = boardB.width = boardB.height = PlayScreen.BOARD_SIZE;
+    }
+
+    private setupText():void {
+        this.shipLab = this.makeLabel("", PlayScreen.BOARD_SIZE/2, PlayScreen.BOARD_Y, 12, this.textOverlay);
+        this.enemyShipLab = this.makeLabel("", PlayScreen.BOARD_SIZE + PlayScreen.BOARD_SIZE/2, PlayScreen.BOARD_Y, 12, this.textOverlay);
+    }
+
+    private updateShipLabels():void {
+        this.shipLab.text = "Your Ships: " + this.shipsRemaining;
+        this.enemyShipLab.text = "Enemy Ships: " + this.enemyShipsRemaining;
     }
 
     private notify(message:string):void {

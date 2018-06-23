@@ -80,7 +80,7 @@ export class MenuScreen extends Screen {
 
     private setupWaitGroup():void {
         this.waitGroup = this.makeGroup();
-        this.waitLab = this.makeLabel("Please wait...", this.centerX, this.centerY-30, this.waitGroup);
+        this.waitLab = this.makeLabel("Please wait...", this.centerX, this.centerY-30, 38, this.waitGroup);
         this.waitGroup.visible = false;
     }
 

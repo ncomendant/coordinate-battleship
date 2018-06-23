@@ -47,9 +47,9 @@ export abstract class Screen {
         return sprite;
     }
 
-    protected makeLabel(text:string, x:number, y:number, group:any = null):any {
+    protected makeLabel(text:string, x:number, y:number, fontSize:number, group:any = null):any {
         if (group == null) group = this.stage;
-        let label:any = this.app.game.add.text(x, y, text,  { fontSize: '38px', fill: '#000000', align:'center'}, group);
+        let label:any = this.app.game.add.text(x, y, text,  { fontSize: fontSize+'px', fill: '#000000', align:'center'}, group);
         label.anchor.setTo(0.5, 0);
         return label;
     }
