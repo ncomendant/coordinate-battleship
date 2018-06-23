@@ -21,7 +21,7 @@ canvas {
 #ui {
     display: none;
     position: absolute;
-    background-color: rgb(0, 0, 0, 0.5);
+    background-color: rgb(0, 0, 0, 0.2);
     top: 0;
     bottom: 0;
     left: 0;
