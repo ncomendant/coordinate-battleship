@@ -71,7 +71,7 @@ export class PlayScreen extends Screen {
             this.playSound("miss-sound");
             this.placeTileSprite("miss", myBoard, coords.x, coords.y, this.markOverlay);
 
-            let message:string = (myBoard) ? "Enemy attack missed." : "Your attacked missed.";
+            let message:string = (myBoard) ? "Enemy attack missed." : "Your attack missed.";
             this.notify(message);
 
             if (myBoard) this.startTurn();
