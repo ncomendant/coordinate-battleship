@@ -14,8 +14,12 @@ export class Match {
         this.userA = null;
         this.userB = null;
 
-        this.hitMapA = new Array(11).fill(new Array(11).fill(false));
-        this.hitMapB = new Array(11).fill(new Array(11).fill(false));
+        this.hitMapA = new Array(11);
+        this.hitMapB = new Array(this.hitMapA.length);
+        for (let i = 0; i < 11; i++) {
+            this.hitMapA[i] = new Array(this.hitMapA.length).fill(false);
+            this.hitMapB[i] = new Array(this.hitMapB.length).fill(false);
+        }
 
         this.active = false;
         this.turnA = true;

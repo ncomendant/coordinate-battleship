@@ -67,15 +67,16 @@ export class MatchManager {
         }
     }
 
-    private processAttack(coords:CoordinatePair, attacker:any, attacked:any, hitmap:boolean[][], fleet:Ship[]):boolean { //returns true if all ships destroyed
+    private processAttack(coords:CoordinatePair, attacker:any, attacked:any, hitMap:boolean[][], fleet:Ship[]):boolean { //returns true if all ships destroyed
         let realAttacker:boolean = this.realUser(attacker);
         let realAttacked:boolean = this.realUser(attacked);
-        if (hitmap[coords.x][coords.y]) { //spot already attacked
+        
+        if (hitMap[coords.x][coords.y]) { //spot already attacked
             if (realAttacker) attacker.emit(IoEvent.ALREADY_ATTACKED, {myBoard:false});
             if (realAttacked) attacked.emit(IoEvent.ALREADY_ATTACKED, {myBoard:true});
         } else { //spot not attacked before
-            hitmap[coords.x][coords.y] = true;
-            let ship:Ship = this.checkForHit(coords, hitmap, fleet);
+            hitMap[coords.x][coords.y] = true;
+            let ship:Ship = this.checkForHit(coords, hitMap, fleet);
             if (ship != null) { //ship was hit
                 let shipSunk:boolean = ship.health === 0;
                 let gameOver:boolean = shipSunk && !this.alive(fleet);
@@ -87,7 +88,6 @@ export class MatchManager {
                 if (realAttacked) attacked.emit(IoEvent.MISS, {myBoard:true, coords:coords}); 
             }
         }
-        return false;
     }
 
     private alive(fleet:Ship[]):boolean {
