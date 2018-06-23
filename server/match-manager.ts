@@ -48,14 +48,14 @@ export class MatchManager {
     }
 
     private completeAttack(coords:CoordinatePair, match:Match):void {
-        let gameOver:boolean = null;
+        let matchOver:boolean = null;
         if (match.turnA)  {
-            gameOver = this.processAttack(coords, match.userA, match.userB, match.hitMapB, match.fleetB);
+            matchOver = this.processAttack(coords, match.userA, match.userB, match.hitMapB, match.fleetB);
         } else {
-            gameOver = this.processAttack(coords, match.userB, match.userA, match.hitMapA, match.fleetA);
+            matchOver = this.processAttack(coords, match.userB, match.userA, match.hitMapA, match.fleetA);
         }
 
-        if (gameOver) {
+        if (matchOver) {
             this.endMatch(match);
         } else {
             match.turnA = !match.turnA;
@@ -83,10 +83,10 @@ export class MatchManager {
             let ship:Ship = this.checkForHit(coords, hitMap, fleet);
             if (ship != null) { //ship was hit
                 let shipSunk:boolean = ship.health === 0;
-                let gameOver:boolean = shipSunk && !this.alive(fleet);
-                if (realAttacker) attacker.emit(IoEvent.HIT, {myBoard:false, coords:coords, shipName:ship.name, shipSunk:shipSunk, gameOver:gameOver}); 
-                if (realAttacked) attacked.emit(IoEvent.HIT, {myBoard:true, coords:coords, shipName:ship.name, shipSunk:shipSunk, gameOver:gameOver}); 
-                if (gameOver) return true;
+                let matchOver:boolean = shipSunk && !this.alive(fleet);
+                if (realAttacker) attacker.emit(IoEvent.HIT, {myBoard:false, coords:coords, shipName:ship.name, shipSunk:shipSunk, matchOver:matchOver}); 
+                if (realAttacked) attacked.emit(IoEvent.HIT, {myBoard:true, coords:coords, shipName:ship.name, shipSunk:shipSunk, matchOver:matchOver}); 
+                if (matchOver) return true;
             } else { //attack missed
                 if (realAttacker) attacker.emit(IoEvent.MISS, {myBoard:false, coords:coords}); 
                 if (realAttacked) attacked.emit(IoEvent.MISS, {myBoard:true, coords:coords}); 

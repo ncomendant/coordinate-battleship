@@ -42,7 +42,7 @@ export class PlayScreen extends Screen {
 
         this.app.io.on(IoEvent.HIT, (data:any) => {
             let myBoard:boolean = data['myBoard'];
-            let gameOver:boolean = data['gameOver'];
+            let matchOver:boolean = data['matchOver'];
             let coords:CoordinatePair = data['coords'];
             let shipName:string = data['shipName'];
             let shipSunk:boolean = data['shipSunk'];
@@ -54,7 +54,7 @@ export class PlayScreen extends Screen {
             message += (shipSunk) ? "sunk!" : "hit.";
             this.notify(message);
 
-            if (gameOver) {
+            if (matchOver) {
                 let message:string = (myBoard) ? "Your fleet was defeated!" : "Your fleet was victorious!";
                 this.app.ui.alert(message, () => {
                     window.location.reload(true);
