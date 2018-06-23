@@ -34,7 +34,7 @@ export class PlayScreen extends Screen {
 
     public init(fleet:Ship[], starting:boolean):void {
         for (let ship of fleet) {
-            this.placeShip(ship);
+            this.placeShip(ship, true);
         }
         this.show();
 
@@ -64,7 +64,7 @@ export class PlayScreen extends Screen {
             }
         });
 
-        this.app.io.on(IoEvent.MISS, (data:any) => { //myBoard:boolean, coords:CoordinatePair
+        this.app.io.on(IoEvent.MISS, (data:any) => {
             let myBoard:boolean = data['myBoard'];
             let coords:CoordinatePair = data['coords'];
 
@@ -77,7 +77,7 @@ export class PlayScreen extends Screen {
             if (myBoard) this.startTurn();
         });
 
-        this.app.io.on(IoEvent.ALREADY_ATTACKED, (data:any) => { //myBoard:boolean
+        this.app.io.on(IoEvent.ALREADY_ATTACKED, (data:any) => {
             let myBoard:boolean = data['myBoard'];
 
             this.playSound("miss-sound");
@@ -86,6 +86,13 @@ export class PlayScreen extends Screen {
             this.notify(message);
 
             if (myBoard) this.startTurn();
+        });
+
+        this.app.io.on(IoEvent.ENEMY_FLEET, (data:any) => {
+            let fleet:Ship[] = data['fleet'];
+            for (let ship of fleet) {
+                this.placeShip(ship, false);
+            }
         });
     }
 
@@ -134,14 +141,14 @@ export class PlayScreen extends Screen {
         return new CoordinatePair(x, y);
     }
 
-    private placeShip(ship:Ship):void {
+    private placeShip(ship:Ship, firstBoard:boolean):void {
         if (ship.horizontal) {
             for (let x = ship.origin.x; x < ship.origin.x+ship.length; x++) {
-                this.placeTileSprite("ship-piece", true, x, ship.origin.y, this.shipOverlay);
+                this.placeTileSprite("ship-piece", firstBoard, x, ship.origin.y, this.shipOverlay);
             }
         } else {
             for (let y = ship.origin.y; y < ship.origin.y+ship.length; y++) {
-                this.placeTileSprite("ship-piece", true, ship.origin.x, y, this.shipOverlay);
+                this.placeTileSprite("ship-piece", firstBoard, ship.origin.x, y, this.shipOverlay);
             }
         }
     }

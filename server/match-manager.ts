@@ -8,7 +8,6 @@ declare function require(moduleName:string):any;
 let crypto:any = require("crypto");
 
 export class MatchManager {
-
     private static readonly BOT:string = "bot";
     private static readonly BOT_RESPONSE_TIME:number = 2000;
 
@@ -57,14 +56,19 @@ export class MatchManager {
         }
 
         if (gameOver) {
-            match.active = false;
-            this.matches.delete(match.id)
-            return;
+            this.endMatch(match);
         } else {
             match.turnA = !match.turnA;
             let currentUser:any = (match.turnA) ? match.userA : match.userB;
             if (currentUser === MatchManager.BOT) this.botAttack(match);
         }
+    }
+
+    private endMatch(match:Match):void {
+        if (this.realUser(match.userA)) match.userA.emit(IoEvent.ENEMY_FLEET, {fleet:match.fleetB});
+        if (this.realUser(match.userB)) match.userB.emit(IoEvent.ENEMY_FLEET, {fleet:match.fleetA});
+        match.active = false;
+        this.matches.delete(match.id);
     }
 
     private processAttack(coords:CoordinatePair, attacker:any, attacked:any, hitMap:boolean[][], fleet:Ship[]):boolean { //returns true if all ships destroyed
@@ -114,8 +118,6 @@ export class MatchManager {
         }
         return null;
     }
-
-
 
     public createPrivateMatch(user:any):void {
         let matchId:string =this.setupMatch(user).id;

@@ -9,6 +9,7 @@ export class IoEvent {
     //Play State
     public static readonly ATTACK:string = "attack";
     public static readonly ENEMY_FLED:string = "enemy fled";
+    public static readonly ENEMY_FLEET:string = "enemy fleet";
 
     public static readonly HIT:string = "hit"; //myBoard:boolean, gameOver:boolean, coords:CoordinatePair, shipName:string, shipSunk:boolean
     public static readonly MISS:string = "miss"; //myBoard:boolean, coords:CoordinatePair
