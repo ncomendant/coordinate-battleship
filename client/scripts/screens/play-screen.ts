@@ -5,7 +5,6 @@ import { IoEvent } from "../../../shared/IoEvent";
 import { CoordinatePair } from "../../../shared/coordinate-pair";
 
 export class PlayScreen extends Screen {
-
     private static readonly BOARD_SIZE:number = 400;
     private static readonly BOARD_Y:number = 100;
     private static readonly TILE_SIZE:number = PlayScreen.BOARD_SIZE/12;
@@ -105,12 +104,12 @@ export class PlayScreen extends Screen {
         console.log(message);
     }
 
-    private startTurn():void {
-        this.app.ui.prompt("Enter the coordinates to attack. Example: (-3,5)", (text:string) => {
+    private startTurn(previousInp:string = null):void {
+        this.app.ui.prompt("Enter the coordinates to attack. Example: (-3,5)", previousInp, (text:string) => {
             let result:any = this.processInput(text);
             if (typeof result === "string") {
                 this.app.ui.alert(result, () => {
-                    this.startTurn();
+                    this.startTurn(text);
                 });
             } else {
                 this.app.io.emit(IoEvent.ATTACK, {coords:result});

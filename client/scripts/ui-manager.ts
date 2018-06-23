@@ -6,9 +6,8 @@ export class UiManager {
     private $uiText:any;
     private $uiInp:any;
 
+    private active:boolean;
     private callback:any;
-
-    private promptMode:boolean;
 
     public constructor() {
         this.$ui = $("#ui");
@@ -16,55 +15,61 @@ export class UiManager {
         this.$uiText = $("#uiText");
         this.$uiInp = $("#uiInp");
 
+        this.active = false;
         this.callback = null;
-        this.promptMode = true;
 
-        this.$uiForm.on("submit", (event:any) => {
-            event.preventDefault();
-            if (this.promptMode) {
-                let value = this.$uiInp.val().trim();
-                this.$ui.hide();
+        this.$uiForm.on("submit", () => {
+            if (this.active) {
                 let callback:any = this.callback;
-                this.callback = null;
-                callback(value);
-            } else {
-                this.$ui.hide();
-                if (this.callback != null) {
-                    let callback:any = this.callback;
-                    this.callback = null;
-                    callback();
-                }
+                this.close();
+                if (callback != null) callback();
+                return false;
+            }
+        });
+
+        $(document).keypress((e) => {
+            if (this.active && e.which === 13) {
+                e.preventDefault();
+                this.$uiForm.submit();
+                return false;
             }
         });
     }
 
-    public prompt(message:string, callback:(text:string) => void):void {
-        this.showUi(message, callback, true);
+    public close():void {
+        if (this.active) {
+            this.$ui.hide();
+            this.callback = null;
+            this.active = false;
+        }
+    }
+
+    public prompt(message:string, inpText:string, callback:(text:string) => void):void {
+        if (inpText == null) inpText = '';
+        this.$uiInp.val(inpText);
+        this.$uiInp.show();
+
+        this.callback =  () => {
+            let text:string = this.$uiInp.val().trim();
+            callback(text);
+        };
+
+        this.showUi(message);
     }
 
     public alert(message:string, callback:() => void = null):void {
-        this.showUi(message, callback, false);
+        this.$uiInp.hide();
+        this.callback =  callback;
+        this.showUi(message);
     }
 
-    private showUi(message:string, callback:any, showPrompt:boolean):void {
-       this.callback = callback;
-       this.promptMode = showPrompt;
-
+    private showUi(message:string):void {
+        this.active = true;
         this.$uiForm.hide();
-
-        if (showPrompt) {
-            this.$uiInp.show();
-            this.$uiInp.val('');
-        }
-        else this.$uiInp.hide();
-
         this.$uiText.html(message);
-
         this.$ui.show();
-        
         this.$uiForm.fadeIn(500, () => {
-            if (showPrompt) this.$uiInp.focus();
-            else this.$ui.focus();
+            this.$uiInp.focus();
         });
     }
 }

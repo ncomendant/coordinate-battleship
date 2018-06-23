@@ -51,7 +51,7 @@ export class MenuScreen extends Screen {
         });
 
         this.makeButton('Join Private Match', this.centerX, 450, this.menuGroup, () => {
-            this.app.ui.prompt("Enter the match ID:", (matchId:string) => {
+            this.app.ui.prompt("Enter the match ID:", null, (matchId:string) => {
                 if (matchId !== null && matchId.trim().length > 0) {
                     this.app.io.emit(IoEvent.JOIN_PRIVATE, {matchId:matchId});
                     this.showWaitMessage("Locating match...");
