@@ -2,7 +2,7 @@ import { MenuScreen } from "./screens/menu-screen";
 import { PlayScreen } from "./screens/play-screen";
 import { UiManager } from "./ui-manager";
 
-declare var Phaser;
+declare var Phaser, $;
 
 export class App {
     private _game:any;
@@ -15,11 +15,15 @@ export class App {
 
     public constructor(serverUrl:string) {
         this._ui = new UiManager();
-        this.loadGame(() => {
-            this.connectToServer(serverUrl, () => {
-                this._menuScreen = new MenuScreen(this);
-                this._playScreen = new PlayScreen(this);
-                this.menuScreen.show();
+
+        let $connecting:any = $("#connecting");
+        
+        this.connectToServer(serverUrl, () => {
+                this.loadGame(() => {
+                    $connecting.hide();
+                    this._menuScreen = new MenuScreen(this);
+                    this._playScreen = new PlayScreen(this);
+                    this.menuScreen.show();
             });
         });
     }
