@@ -50,7 +50,7 @@ export class PlayScreen extends Screen {
             this.playSound("explosion-sound");
             this.placeTileSprite("explosion", myBoard, coords.x, coords.y, this.markOverlay);
             let message:string = (myBoard) ? "Your " : "Enemy ";
-            message += shipName + " was ";
+            message += shipName.toLowerCase() + " was ";
             message += (shipSunk) ? "sunk!" : "hit.";
             this.notify(message);
 
