@@ -1,15 +1,30 @@
 import { MatchManager } from "./match-manager";
 import { IoEvent } from "../battleship-shared/io-event";
+import { Config } from "./config";
 
 declare function require(moduleName:string):any;
 
 export class App {
 
-    public constructor(port:number) {
+    public constructor(port:number, secure:boolean) {
 
         let matchManager:MatchManager = new MatchManager();
 
-        let server = require('http').createServer();
+        let server:any = null;
+
+        if (secure) {
+            let sslPath = '/etc/letsencrypt/live/buildbright.net/';
+
+            let fs:any = require('fs');
+            let options = {
+                key: fs.readFileSync(sslPath + 'privkey.pem'),
+                cert: fs.readFileSync(sslPath + 'fullchain.pem')
+            };
+            server = require('https').createServer(options);
+        } else {
+            server = require('http').createServer();
+        }
+        
         var io = require('socket.io')(server);
         io.on('connection', (user:any) => {
             user.data = {};
@@ -68,4 +83,4 @@ export class App {
 
 }
 
-new App(3001);
+new App(Config.PORT, Config.SECURE);

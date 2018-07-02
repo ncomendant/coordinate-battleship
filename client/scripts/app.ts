@@ -1,6 +1,7 @@
 import { MenuScreen } from "./screens/menu-screen";
 import { PlayScreen } from "./screens/play-screen";
 import { UiManager } from "./ui-manager";
+import { Config } from "./config";
 
 declare var Phaser, $;
 
@@ -38,6 +39,10 @@ export class App {
             });
             callback();
         });
+
+        window.onbeforeunload = () => {
+            this.io.removeAllListeners();
+        };
     }
 
     private loadGame(callback:() => void):void {
@@ -96,4 +101,4 @@ export class App {
     }
 }
 
-new App("http://localhost:3001");
+new App(Config.SERVER_URL);
