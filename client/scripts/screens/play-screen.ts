@@ -154,26 +154,18 @@ export class PlayScreen extends Screen {
 
     private processInput(text:string):any {
         text = text.replace(/\s/g,''); //remove all whitespace
+        
+        let coordinateRegex:RegExp = /^\(([+-]?\d+),([+-]?\d+)\)$/;
 
-        if (text.length === 0) return "Input cannot be empty.";
-        if (!text.startsWith("(") || !text.endsWith(")")) return "Does not start and end with parentheses.";
+        let values = coordinateRegex.exec(text);
 
-        text = text.slice(1, text.length-1); //remove parentheses
+        if (values == null) return "Invalid coordinate pair.";
 
-        let chunks:string[] = text.split(",");
-        if (chunks.length !== 2) return "Incorrect comma use.";
+        let x:number = parseInt(values[1]);
+        let y:number = parseInt(values[2]);
 
-        let intRegEx:any = /^[-+]?\d+$/;
-        if (!intRegEx.test(chunks[0]) || !intRegEx.test(chunks[1])) return "Invalid numbers for coordiantes.";
-
-        let x:number = parseInt(chunks[0]);
-        let y:number = parseInt(chunks[1]);
-
-        // if (isNaN(x) || isNaN(y)) return "Invalid numbers for coordiantes.";
-        if (x < -5) return "x-coordinate cannot be less than -5."
-        if (y < -5) return "y-coordinate cannot be less than -5."
-        if (x > 5) return "x-coordinate cannot be greater than 5."
-        if (y > 5) return "y-coordinate cannot be greater than 5."
+        if (x < -5 || x > 5) return "x-coordinate must be between -5 and 5.";
+        if (y < -5 || y > 5) return "y-coordinate must be between -5 and 5.";
 
         return new CoordinatePair(x, y);
     }
