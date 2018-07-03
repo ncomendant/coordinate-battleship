@@ -12,5 +12,5 @@ https://buildbright.net/battleship/
 - CSS
 - jQuery
 - Node JS
-- Socket IO
-- Phaser IO
+- [Socket IO](https://socket.io/)
+- [Phaser IO](https://phaser.io/)
